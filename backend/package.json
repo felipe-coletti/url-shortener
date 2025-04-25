@@ -1,11 +1,12 @@
 {
-    "name": "link-shortener",
+    "name": "link-shortener-backend",
     "version": "1.0.0",
     "description": "Encurtador de links simples com Node.js e MongoDB",
     "main": "server.js",
+    "type": "module",
     "scripts": {
         "start": "node server.js",
-        "dev": "npm run dev --prefix backend & npm run dev --prefix frontend"
+        "dev": "nodemon server.js"
     },
     "dependencies": {
         "dotenv": "^16.5.0",
