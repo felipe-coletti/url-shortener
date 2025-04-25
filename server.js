@@ -56,7 +56,6 @@ app.post('/shorten', async (req, res) => {
     }
 })
 
-// Rota para redirecionar o link encurtado
 app.get('/:shortUrl', async (req, res) => {
     const { shortUrl } = req.params
 
@@ -66,7 +65,6 @@ app.get('/:shortUrl', async (req, res) => {
         return res.status(404).json({ error: 'Link não encontrado.' })
     }
 
-    // Verificar se o link expirou
     if (new Date() > link.expiresAt) {
         return res.status(410).json({ error: 'O link expirou.' })
     }
@@ -74,7 +72,6 @@ app.get('/:shortUrl', async (req, res) => {
     res.redirect(link.originalUrl)
 })
 
-// Iniciar o servidor
 app.listen(port, () => {
     console.log(`Servidor rodando em http://localhost:${port}`)
 })
