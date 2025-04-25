@@ -1,15 +1,13 @@
-// server.js
+import 'dotenv/config'
+import express from 'express'
+import mongoose from 'mongoose'
+import { v4 as uuidv4 } from 'uuid'
 
-require('dotenv').config()
-
-const express = require('express')
-const mongoose = require('mongoose')
-const { v4: uuidv4 } = require('uuid')
 const app = express()
 
-const PORT = process.env.PORT
+const PORT = process.env.PORT || 3000
 const MONGO_URI = process.env.MONGO_URI
-const BASE_URL = process.env.BASE_URL
+const BASE_URL = process.env.BASE_URL || `http://localhost:${PORT}`
 
 app.use(express.static('public'))
 app.use(express.json())
