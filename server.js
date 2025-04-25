@@ -1,21 +1,26 @@
+// server.js
+
+require('dotenv').config()
+
 const express = require('express')
 const mongoose = require('mongoose')
 const { v4: uuidv4 } = require('uuid')
 const app = express()
-const port = 3000
+
+const PORT = process.env.PORT
+const MONGO_URI = process.env.MONGO_URI
+const BASE_URL = process.env.BASE_URL
 
 app.use(express.static('public'))
+app.use(express.json())
 
 mongoose
-    .connect('mongodb://localhost:27017/linkshortener', {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-    })
+    .connect(MONGO_URI)
     .then(() => {
-        console.log('Conectado ao MongoDB')
+        console.log('Connected to MongoDB')
     })
     .catch((err) => {
-        console.error('Erro ao conectar ao MongoDB', err)
+        console.error('Failed to connect to MongoDB', err)
     })
 
 const LinkSchema = new mongoose.Schema({
@@ -23,36 +28,36 @@ const LinkSchema = new mongoose.Schema({
     shortUrl: { type: String, required: true },
     expiresAt: { type: Date, required: true },
 })
+
 const Link = mongoose.model('Link', LinkSchema)
 
-app.use(express.json())
 app.post('/shorten', async (req, res) => {
     const { url, expiration } = req.body
 
     if (!url || !url.startsWith('http')) {
-        return res.status(400).json({ error: 'URL inválida. Deve começar com "http".' })
+        return res.status(400).json({ error: 'Invalid URL. Must start with "http".' })
     }
 
-    let expiresAt = new Date()
+    const expiresAt = new Date()
 
     expiresAt.setDate(expiresAt.getDate() + (expiration || 30))
 
     const shortUrl = uuidv4().slice(0, 8)
     const newLink = new Link({
         originalUrl: url,
-        shortUrl: shortUrl,
-        expiresAt: expiresAt,
+        shortUrl,
+        expiresAt,
     })
 
     try {
         await newLink.save()
 
         res.json({
-            shortUrl: `${req.protocol}://${req.get('host')}/${shortUrl}`,
+            shortUrl: `${BASE_URL}/${shortUrl}`,
             expiresAt,
         })
     } catch (error) {
-        res.status(500).json({ error: 'Erro ao salvar o link.' })
+        res.status(500).json({ error: 'Failed to save the link.' })
     }
 })
 
@@ -62,16 +67,15 @@ app.get('/:shortUrl', async (req, res) => {
     const link = await Link.findOne({ shortUrl })
 
     if (!link) {
-        return res.status(404).json({ error: 'Link não encontrado.' })
+        return res.status(404).json({ error: 'Link not found.' })
     }
-
     if (new Date() > link.expiresAt) {
-        return res.status(410).json({ error: 'O link expirou.' })
+        return res.status(410).json({ error: 'The link has expired.' })
     }
 
     res.redirect(link.originalUrl)
 })
 
-app.listen(port, () => {
-    console.log(`Servidor rodando em http://localhost:${port}`)
+app.listen(PORT, () => {
+    console.log(`Server is running at ${BASE_URL}`)
 })
