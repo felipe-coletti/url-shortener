@@ -15,11 +15,11 @@ function shortenUrl() {
     const url = urlInput.value
     const expiration = expirationInput.value
 
-    resultDiv.textContent = ''
+    resultDiv.innerHTML = ''
     resultDiv.hidden = true
 
     if (!url) {
-        resultDiv.textContent = 'Por favor, insira uma URL válida.'
+        resultDiv.innerHTML = '<p class="paragraph">Por favor, insira uma URL válida</p>'
         resultDiv.hidden = false
         return
     }
@@ -36,7 +36,7 @@ function shortenUrl() {
         <p class="paragraph">${expiration ? expiration + ' dias' : 'Sem expiração'}</p>
       </div
     `
-    resultDiv.style.display = 'flex'
+    resultDiv.hidden = false
 
     urlInput.value = ''
     expirationInput.value = ''
