@@ -15,12 +15,12 @@ function shortenUrl() {
     const url = urlInput.value
     const expiration = expirationInput.value
 
-    resultDiv.innerHTML = ''
-    resultDiv.style.display = 'none'
+    resultDiv.textContent = ''
+    resultDiv.hidden = true
 
     if (!url) {
-        resultDiv.innerHTML = 'Por favor, insira uma URL válida.'
-        resultDiv.style.display = 'flex'
+        resultDiv.textContent = 'Por favor, insira uma URL válida.'
+        resultDiv.hidden = false
         return
     }
 
