@@ -3,16 +3,18 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex, nofollow">
     <title>Redirecionando...</title>
     <link rel="stylesheet" href="/css/redirect.css">
     <noscript><meta http-equiv="refresh" content="5;url={{DESTINATION}}"></noscript>
-    <script src="/js/redirect.js"></script>
+    <script src="/js/redirect.js" defer></script>
 </head>
-<body data-destination="{{DESTINATION_JS}}">
+<body data-destination="{{DESTINATION}}">
     <div class="card">
         <p>Redirecionando em <span id="countdown">5</span>s</p>
         <div id="ad">{{AD_SCRIPT}}</div>
-        <p class="skip">Demorando? <a href="{{DESTINATION}}">Clique aqui</a></p>
+        <p class="destination">Destino: <span>{{DESTINATION}}</span></p>
+        <p class="skip">Demorando? <a href="{{DESTINATION}}" rel="noopener noreferrer">Clique aqui</a></p>
     </div>
 </body>
-</html>   
+</html>

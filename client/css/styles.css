@@ -133,3 +133,20 @@
 		box-shadow: none;
 	}
 }
+
+#result:not([hidden]) {
+	display: flex;
+}
+
+#button:disabled {
+	cursor: wait;
+	opacity: 0.7;
+}
+
+.link {
+	word-break: break-all;
+}
+
+.error {
+	color: #c62828;
+}

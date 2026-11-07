@@ -1,11 +1,10 @@
-export function getAdScript() {
-    const { AD_PROVIDER, AD_ZONE_ID } = process.env
-    
-    const configs = {
-        adsterra: `<script src='//pl.hbck.me/scripts/zone.js' data-zone='${AD_ZONE_ID}'></script>`,
-        propellerads: `<script src='//pl.profitablecpmrate.com/zone.js' data-zone='${AD_ZONE_ID}'></script>`,
-        monetag: `<script src='//app.monetag.com/adsense/zone.js' data-zone='${AD_ZONE_ID}'></script>`,
-    }
+import { esc } from './escape.js'
 
-    return configs[AD_PROVIDER] || ''
-}   
+// Use exatamente o endereço do script que o painel do seu provedor de anúncios fornecer.
+export function getAdScript({ scriptSrc, zoneId } = {}) {
+    if (!scriptSrc) return ''
+
+    const zone = zoneId ? ` data-zone="${esc(zoneId)}"` : ''
+
+    return `<script async src="${esc(scriptSrc)}"${zone}></script>`
+}

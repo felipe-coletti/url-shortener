@@ -1,43 +1,75 @@
-document.addEventListener('DOMContentLoaded', function () {
-    const form = document.getElementById('form')
-
-    form.addEventListener('submit', function (event) {
+document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('form').addEventListener('submit', (event) => {
         event.preventDefault()
         shortenUrl()
     })
 })
 
-function shortenUrl() {
+function element(tag, className, text) {
+    const el = document.createElement(tag)
+    if (className) el.className = className
+    if (text !== undefined) el.textContent = text
+    return el
+}
+
+function information(title, content) {
+    const wrapper = element('div', 'information')
+    wrapper.append(element('h2', 'secondary-title', title), content)
+    return wrapper
+}
+
+function showResult(...children) {
+    const resultDiv = document.getElementById('result')
+    resultDiv.replaceChildren(...children)
+    resultDiv.hidden = false
+}
+
+function showError(message) {
+    showResult(element('p', 'paragraph error', message))
+}
+
+async function shortenUrl() {
     const urlInput = document.getElementById('url')
     const expirationInput = document.getElementById('expiration')
-    const resultDiv = document.getElementById('result')
+    const button = document.getElementById('button')
 
-    const url = urlInput.value
+    const url = urlInput.value.trim()
     const expiration = expirationInput.value
 
-    resultDiv.innerHTML = ''
-    resultDiv.hidden = true
+    if (!url) return showError('Por favor, insira uma URL válida.')
 
-    if (!url) {
-        resultDiv.innerHTML = '<p class="paragraph">Por favor, insira uma URL válida</p>'
-        resultDiv.hidden = false
-        return
+    button.disabled = true
+
+    try {
+        const response = await fetch('/shorten', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ url, expiration: expiration ? Number(expiration) : undefined }),
+        })
+        const data = await response.json().catch(() => ({}))
+
+        if (!response.ok) return showError(data.error || 'Não foi possível encurtar o link.')
+
+        const link = element('a', 'link', data.shortUrl)
+        link.href = data.shortUrl
+        link.target = '_blank'
+        link.rel = 'noopener'
+
+        const expiresAt = new Date(data.expiresAt).toLocaleString('pt-BR', {
+            dateStyle: 'short',
+            timeStyle: 'short',
+        })
+
+        showResult(
+            information('Link encurtado', link),
+            information('Expira em', element('p', 'paragraph', expiresAt))
+        )
+
+        urlInput.value = ''
+        expirationInput.value = ''
+    } catch {
+        showError('Erro de conexão. Tente novamente.')
+    } finally {
+        button.disabled = false
     }
-
-    const shortenedUrl = `https://short.ly/${btoa(url).slice(0, 8)}`
-
-    resultDiv.innerHTML = `
-      <div class="information">
-        <h2 class="secondary-title">Link encurtado</h2>
-        <a class="link" href="${shortenedUrl}" target="_blank">${shortenedUrl}</a>
-      </div>
-      <div class="information">
-        <h2 class="secondary-title">Expiração</h2>
-        <p class="paragraph">${expiration ? expiration + ' dias' : 'Sem expiração'}</p>
-      </div
-    `
-    resultDiv.hidden = false
-
-    urlInput.value = ''
-    expirationInput.value = ''
 }

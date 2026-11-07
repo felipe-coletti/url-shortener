@@ -4,16 +4,23 @@
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Encurtador de Link</title>
-        <link rel="stylesheet" href="css/styles.css" />
-        <script src="js/script.js" defer></script>
+        <meta name="description" content="Encurte links longos de forma rápida e gratuita." />
+        <link rel="stylesheet" href="/css/styles.css" />
+        <script src="/js/script.js" defer></script>
     </head>
     <body>
         <main id="main">
             <div id="container">
                 <h1 id="primary-title">Encurtador de Link</h1>
                 <form id="form">
-                    <input type="text" id="url" class="input" placeholder="Cole sua URL aqui" required />
-                    <input type="number" id="expiration" class="input" placeholder="Expiração (em dias)" />
+                    <label for="url" class="label">
+                        URL
+                        <input type="url" id="url" name="url" class="input" placeholder="https://exemplo.com/pagina" maxlength="2048" required />
+                    </label>
+                    <label for="expiration" class="label">
+                        Expiração (em dias)
+                        <input type="number" id="expiration" name="expiration" class="input" placeholder="30" min="1" max="365" step="1" />
+                    </label>
                     <button type="submit" id="button">Encurtar URL</button>
                 </form>
                 <div id="result" role="status" aria-live="polite" hidden></div>
